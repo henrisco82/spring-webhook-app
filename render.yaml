@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: stripe-webhook
+    env: docker
+    plan: free
+    repository: https://github.com/henryunah/spring-webhook-app # Update if different, but Render usually infers from repo context
+    envVars:
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: NEXT_PUBLIC_FIREBASE_PROJECT_ID
+        sync: false
+      - key: FIREBASE_CLIENT_EMAIL
+        sync: false
+      - key: FIREBASE_PRIVATE_KEY
+        sync: false
