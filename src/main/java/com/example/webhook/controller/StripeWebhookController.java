@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.servlet.http.HttpServletRequest;
+import java.util.stream.Collectors;
 
 import java.util.Date;
 import java.util.Map;
@@ -27,9 +29,16 @@ public class StripeWebhookController {
     private Firestore firestore;
 
     @PostMapping("/stripe-webhook")
-    public ResponseEntity<String> handleStripeWebhook(@RequestBody String payload,
+    public ResponseEntity<String> handleStripeWebhook(HttpServletRequest request,
             @RequestHeader("stripe-signature") String sigHeader) {
         System.out.println("🔔 Stripe webhook received!");
+
+        String payload;
+        try {
+            payload = request.getReader().lines().collect(Collectors.joining("\n"));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Failed to read request body");
+        }
 
         if (endpointSecret == null) {
             System.err.println("❌ STRIPE_WEBHOOK_SECRET not configured");
